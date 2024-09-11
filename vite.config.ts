@@ -14,7 +14,7 @@ export default defineConfig({
     rollupOptions: {
       output: {
         dir: './dist',
-        entryFileNames: "admin-[name].js",
+        entryFileNames: "admin-[name].min.js",
         assetFileNames: "admin-[name].[ext]",
       },
     }

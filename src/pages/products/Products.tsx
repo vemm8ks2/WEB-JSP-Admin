@@ -13,6 +13,8 @@ const popularProducts = Array.from({ length: 10 }).map((_, i) => ({
 }));
 
 const Products = () => {
+  const rootPath = import.meta.env.VITE_JSP_DEFAULT_PATH;
+
   const [searchTerm, setSearchTerm] = useState("");
   const isLaoding = false;
 
@@ -34,7 +36,7 @@ const Products = () => {
       {/* HEADER BAR */}
       <div className="flex justify-between items-center mb-6">
         <Header name="Products" />
-        <Link to="/create-product">
+        <Link to={`/${rootPath}/create-product`}>
           <button className="flex items-center bg-blue-500 hover:bg-blue-700 text-gray-200 font-bold py-2 px-4 rounded">
             <PlusCircleIcon className="w-5 h-5 mr-2 !text-gray-200" />
             Create Product

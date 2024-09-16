@@ -114,6 +114,12 @@ function Sidebar({
           label="Expenses"
           sidebar={sidebar}
         />
+        <SidebarLink
+          href={`${rootPath}/category`}
+          icon={CircleDollarSign}
+          label="Category"
+          sidebar={sidebar}
+        />
       </div>
 
       {/* FOOTER */}

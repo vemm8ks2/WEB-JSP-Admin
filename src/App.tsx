@@ -8,7 +8,6 @@ import Users from "./pages/users/Users";
 import Settings from "./pages/settings/Settings";
 import Expenses from "./pages/expenses/Expenses";
 import CreateProduct from "./pages/createProduct/CreateProduct";
-import CreateCategory from "./pages/createCategory/CreateCategory";
 import Category from "./pages/category/Category";
 
 function App() {
@@ -23,12 +22,14 @@ function App() {
           <Route path={`${rootPath}/dashboard`} element={<Dashboard />} />
           <Route path={`${rootPath}/inventory`} element={<Inventory />} />
           <Route path={`${rootPath}/products`} element={<Products />} />
-          <Route path={`${rootPath}/create-product`} element={<CreateProduct />} />
+          <Route
+            path={`${rootPath}/create-product`}
+            element={<CreateProduct />}
+          />
           <Route path={`${rootPath}/users`} element={<Users />} />
           <Route path={`${rootPath}/settings`} element={<Settings />} />
           <Route path={`${rootPath}/expenses`} element={<Expenses />} />
           <Route path={`${rootPath}/category`} element={<Category />} />
-          <Route path={`${rootPath}/create-category`} element={<CreateCategory />} />
         </Routes>
       </DashboardWrapper>
     </HashRouter>

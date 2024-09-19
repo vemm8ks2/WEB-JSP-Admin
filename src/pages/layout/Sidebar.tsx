@@ -6,6 +6,7 @@ import {
   LucideIcon,
   SlidersHorizontal,
   User,
+  ArrowDownWideNarrow
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 
@@ -116,7 +117,7 @@ function Sidebar({
         />
         <SidebarLink
           href={`${rootPath}/category`}
-          icon={CircleDollarSign}
+          icon={ArrowDownWideNarrow}
           label="Category"
           sidebar={sidebar}
         />

@@ -15,7 +15,7 @@ const DashboardWrapper = ({
     <div className="flex bg-gray-50 text-gray-900 w-full min-w-max max-w-[100vw] min-h-screen">
       <Sidebar sidebarState={sidebarState} />
       <main
-        className={`flex flex-col w-screen h-full min-h-screen py-7 px-9 bg-gray-50 ${
+        className={`flex flex-col w-full h-full min-h-screen py-7 px-9 bg-gray-50 ${
           sidebarState.sidebar ? "pl-24" : "pl-72"
         }`}
       >

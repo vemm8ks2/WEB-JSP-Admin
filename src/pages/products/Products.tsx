@@ -1,22 +1,29 @@
 import { PlusCircleIcon, SearchIcon } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Header from "../components/Header/Header";
 import Rating from "../components/Rating/Rating";
 import { Link } from "react-router-dom";
+import { Product } from ".";
 
-const popularProducts = Array.from({ length: 10 }).map((_, i) => ({
-  productId: i + 1,
-  name: `product name ${i}`,
-  price: (i + 1) * 1000,
-  rating: i % 6,
-  stockQuantity: (i + 1) * 1000,
-}));
+const serverUrl = import.meta.env.VITE_JSP_SERVER_URL;
 
 const Products = () => {
   const rootPath = import.meta.env.VITE_JSP_DEFAULT_PATH;
 
+  const [productsList, setProductsList] = useState<Product[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const isLaoding = false;
+  
+  useEffect(() => {
+    fetch(`${serverUrl}/product`, {
+      method: "GET",
+      headers: { "Content-type": "application/json" },
+    })
+      .then((res) => res.json())
+      .then((data) => setProductsList(data.productList));
+  }, []);
+
+  console.log(productsList);
 
   return (
     <div className="mx-auto pb-5 w-full">
@@ -49,30 +56,29 @@ const Products = () => {
         {isLaoding ? (
           <div>Loading...</div>
         ) : (
-          popularProducts.map((product) => (
+          productsList.map(({productName,productId,productPrice,productStock}) => (
             <div
-              key={product.productId}
+              key={productId}
               className="border shadow rounded-md p-4 max-w-full w-full mx-auto"
             >
               <div className="flex flex-col items-center">
                 <div className="w-16 h-16 bg-gray-200 rounded-md"></div>
-                <h3 className="text-lg text-gray-900 font-bold">
-                  {product.name}
+                <h3 className="mt-2 text-lg text-gray-900 font-bold">
+                  {productName}
                 </h3>
-                <p className="text-gray-800">${product.price.toFixed(2)}</p>
+                <p className="text-gray-800">{productPrice}원</p>
                 <div className="text-sm text-gray-600 mt-1">
-                  Stock: {product.stockQuantity}
+                  Stock: {productStock}
                 </div>
-                {product.rating >= 0 && (
-                  <div className="flex items-center mt-2">
-                    <Rating rating={product.rating} />
+                <div className="flex items-center mt-2">
+                    <Rating rating={3} />
                   </div>
-                )}
               </div>
             </div>
           ))
         )}
       </div>
+
     </div>
   );
 };

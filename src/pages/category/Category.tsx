@@ -6,8 +6,9 @@ import { Button } from "@/components/ui/button";
 import CreateCategoryModal from "./CreateCategoryModal";
 import Header from "../components/Header/Header";
 
+const serverUrl = import.meta.env.VITE_JSP_SERVER_URL;
+
 const Category = () => {
-  const serverUrl = import.meta.env.VITE_JSP_SERVER_URL;
 
   const [categoryList, setCategoryList] = useState<ICategory[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<ICategory>();
@@ -20,7 +21,7 @@ const Category = () => {
     })
       .then((res) => res.json())
       .then((data) => setCategoryList(data.categoryList));
-  }, [serverUrl]);
+  }, []);
 
   const handleUpdate = () => {
     if (!selectedCategory || !updateCategoryName) return;

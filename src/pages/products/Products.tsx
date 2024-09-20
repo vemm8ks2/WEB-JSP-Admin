@@ -1,9 +1,12 @@
-import { PlusCircleIcon, SearchIcon } from "lucide-react";
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { PlusCircleIcon, SearchIcon } from "lucide-react";
+
 import Header from "../components/Header/Header";
 import Rating from "../components/Rating/Rating";
-import { Link } from "react-router-dom";
+import ProductDropdownMenu from "./ProductDropdownMenu";
 import { Product } from ".";
+
 
 const serverUrl = import.meta.env.VITE_JSP_SERVER_URL;
 
@@ -22,8 +25,6 @@ const Products = () => {
       .then((res) => res.json())
       .then((data) => setProductsList(data.productList));
   }, []);
-
-  console.log(productsList);
 
   return (
     <div className="mx-auto pb-5 w-full">
@@ -56,23 +57,26 @@ const Products = () => {
         {isLaoding ? (
           <div>Loading...</div>
         ) : (
-          productsList.map(({productName,productId,productPrice,productStock}) => (
+          productsList.map((p) => (
             <div
-              key={productId}
-              className="border shadow rounded-md p-4 max-w-full w-full mx-auto"
+              key={p.productId}
+              className="relative border shadow rounded-md p-4 max-w-full w-full mx-auto"
             >
               <div className="flex flex-col items-center">
                 <div className="w-16 h-16 bg-gray-200 rounded-md"></div>
                 <h3 className="mt-2 text-lg text-gray-900 font-bold">
-                  {productName}
+                  {p.productName}
                 </h3>
-                <p className="text-gray-800">{productPrice}원</p>
+                <p className="text-gray-800">{p.productPrice}원</p>
                 <div className="text-sm text-gray-600 mt-1">
-                  Stock: {productStock}
+                  Stock: {p.productStock}
                 </div>
                 <div className="flex items-center mt-2">
                     <Rating rating={3} />
                   </div>
+              </div>
+              <div className="absolute right-5 top-2">
+                <ProductDropdownMenu product={p} setProductsList={setProductsList} />
               </div>
             </div>
           ))

@@ -1,14 +1,15 @@
-import { zodResolver } from '@hookform/resolvers/zod';
 import { useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import ReactQuill from 'react-quill';
 import { z } from "zod"
-import 'react-quill/dist/quill.snow.css';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import useCategories from '@/api/useCategories';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import useCategories from '@/api/useCategories';
+
+import 'react-quill/dist/quill.snow.css';
 
 const formSchema = z.object({
   productName: z.string().min(2, {
@@ -58,8 +59,6 @@ const CreateProduct = () => {
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
-    console.log({ ...values, description })
-
     const formData = new FormData();
 
     formData.append('product_name', values.productName);
@@ -175,7 +174,7 @@ const CreateProduct = () => {
           modules={modules} 
           className=''
         />
-        <Button type="submit">Submit</Button>
+        <Button type="submit">생성하기</Button>
       </form>
     </Form>
   )

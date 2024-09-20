@@ -4,9 +4,11 @@ import { useForm } from 'react-hook-form';
 import ReactQuill from 'react-quill';
 import { z } from "zod"
 import 'react-quill/dist/quill.snow.css';
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import useCategories from '@/api/useCategories';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const formSchema = z.object({
   productName: z.string().min(2, {
@@ -14,15 +16,20 @@ const formSchema = z.object({
   }),
   productPrice: z.string(),
   productStock: z.string(),
-  productImage: z.string(),
+  productImage: z.instanceof(File)
+    .refine((file) => file.size < 10000000, {
+      message: 'Your resume must be less than 10MB.',
+    }),
+  productCategory: z.string(),
 })
 
+const serverUrl = import.meta.env.VITE_JSP_SERVER_URL;
+
 const CreateProduct = () => {
-  const [value, setValue] = useState('');
+  const { categoryList } = useCategories();
+  const [description, setDescription] = useState('');
 
-  const rootPath = import.meta.env.VITE_JSP_DEFAULT_PATH;
-
-  const modules:{} = useMemo(() => ({
+  const modules = useMemo(() => ({
     toolbar: {
       container: [
         [{ header: [1, 2, 3, 4, 5, false] }],
@@ -48,25 +55,31 @@ const CreateProduct = () => {
   })
 
   // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  const onSubmit = (values: z.infer<typeof formSchema>) => {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
-    console.log(values)
+    console.log({ ...values, description })
 
-    fetch(`${rootPath}/createProduct.do`, {
+    const formData = new FormData();
+
+    formData.append('product_name', values.productName);
+    formData.append('product_price', values.productPrice);
+    formData.append('product_stock', values.productStock);
+    formData.append('product_category', values.productCategory);
+    formData.append('product_image', values.productImage!)
+    formData.append('product_description', description);
+
+    fetch(`${serverUrl}/product`, {
       method: 'POST',
-      headers: { 'Content-type': 'application/x-www-form-urlencoded' }, // 이게 맞는지 고민해보아야 함.
-      body: new URLSearchParams({
-      }),
+      body: formData,
     })
       .then(res => res.json())
-      .then(() => {
-        alert(`상품 생성 완료!`);
+      .then(data => {
+        alert(data.msg); 
       });
   }
 
   return (
-    <>
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <FormField
@@ -78,9 +91,6 @@ const CreateProduct = () => {
               <FormControl>
                 <Input placeholder="상품명" {...field} />
               </FormControl>
-              <FormDescription>
-                This is your public display name.
-              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -94,9 +104,6 @@ const CreateProduct = () => {
               <FormControl>
                 <Input placeholder="상품 가격" {...field} />
               </FormControl>
-              <FormDescription>
-                This is your public display name.
-              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -110,9 +117,31 @@ const CreateProduct = () => {
               <FormControl>
                 <Input placeholder="재고" {...field} />
               </FormControl>
-              <FormDescription>
-                This is your public display name.
-              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="productCategory"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>카테고리</FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="상품의 카테고리를 선택해주세요" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {categoryList.map(({ categoryId, categoryName }) => (
+                      <SelectItem value={categoryId.toString()}>
+                        {categoryName}
+                      </SelectItem>
+                    )
+                  )}
+                </SelectContent>
+              </Select>
               <FormMessage />
             </FormItem>
           )}
@@ -120,30 +149,35 @@ const CreateProduct = () => {
         <FormField
           control={form.control}
           name="productImage"
-          render={({ field }) => (
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          render={({ field: { value, onChange, ...fieldProps } }) => (
             <FormItem>
               <FormLabel>이미지</FormLabel>
               <FormControl>
-                <Input placeholder="이미지" {...field} />
+                <Input 
+                  {...fieldProps}
+                  type="file"
+                  placeholder="이미지"
+                  accept="image/*"
+                  onChange={(event) =>
+                    onChange(event.target.files && event.target.files[0])
+                  }
+                />
               </FormControl>
-              <FormDescription>
-                This is your public display name.
-              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
         <ReactQuill 
           theme="snow" 
-          value={value} 
-          onChange={setValue} 
+          value={description} 
+          onChange={setDescription} 
           modules={modules} 
           className=''
         />
         <Button type="submit">Submit</Button>
       </form>
     </Form>
-    </>
   )
 };
 

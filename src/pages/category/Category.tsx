@@ -20,7 +20,7 @@ const Category = () => {
     })
       .then((res) => res.json())
       .then((data) => setCategoryList(data.categoryList));
-  }, []);
+  }, [serverUrl]);
 
   const handleUpdate = () => {
     if (!selectedCategory || !updateCategoryName) return;
